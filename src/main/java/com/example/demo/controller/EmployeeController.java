@@ -5,22 +5,22 @@ import com.example.demo.dto.EmployeeRequestDTO;
 import com.example.demo.dto.EmployeeResponseDTO;
 import com.example.demo.service.EmployeeService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
+@Validated
+@RequiredArgsConstructor
 @RequestMapping("/employee")
 public class EmployeeController {
 
     private final EmployeeService service;
-
-    public EmployeeController(EmployeeService employeeService) {
-        this.service = employeeService;
-    }
 
     @PostMapping
     public ResponseEntity<ApiResponse<EmployeeResponseDTO>> create(@Valid @RequestBody EmployeeRequestDTO dto){

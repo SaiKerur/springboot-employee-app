@@ -14,6 +14,20 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity<ApiResponse<Map<String, Object>>> handleConflict(DuplicateResourceException exception) {
+        Map<String, Object> error = new HashMap<>();
+        error.put("error", exception.getMessage());
+
+        ApiResponse<Map<String, Object>> response = new ApiResponse<>(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                "Resource already exists",
+                error
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse<Map<String, Object>>> handleNotFound(ResourceNotFoundException exception){
         Map<String, Object> error = new HashMap<>();
