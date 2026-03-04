@@ -1,14 +1,13 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.EmployeeResponseDTO;
-import com.example.demo.dto.*;
+import com.example.demo.dto.EmployeeRequestDTO;
 import com.example.demo.model.Employee;
 import com.example.demo.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService{
@@ -22,30 +21,28 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Override
     public EmployeeResponseDTO save(EmployeeRequestDTO dto) {
-
         Employee employee = new Employee();
-        employee.setName(dto.getName());
-        employee.setEmail(dto.getEmail());
-        employee.setSalary(dto.getSalary());
-
+        employee.setName(dto.name());
+        employee.setEmail(dto.email());
+        employee.setSalary(dto.salary());
         Employee savedEmployee = employeeRepository.save(employee);
-
-        return new EmployeeResponseDTO(
-                savedEmployee.getId(),
-                savedEmployee.getName(),
-                savedEmployee.getEmail(),
-                savedEmployee.getSalary()
-        );
-
+        return toResponse(savedEmployee);
     }
 
     @Override
     public List<EmployeeResponseDTO> getAll() {
-        return employeeRepository.findAll().stream().map(emp -> new EmployeeResponseDTO(
-                emp.getId(),
-                emp.getName(),
-                emp.getEmail(),
-                emp.getSalary()
-        )).collect(Collectors.toList());
+        return employeeRepository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    private EmployeeResponseDTO toResponse(Employee employee) {
+        return new EmployeeResponseDTO(
+                employee.getId(),
+                employee.getName(),
+                employee.getEmail(),
+                employee.getSalary()
+        );
     }
 }

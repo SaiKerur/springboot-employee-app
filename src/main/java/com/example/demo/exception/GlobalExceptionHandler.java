@@ -1,12 +1,12 @@
 package com.example.demo.exception;
 
+import com.example.demo.dto.ApiResponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,25 +15,35 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, Object> handleNotFound(ResourceNotFoundException exception){
+    public ResponseEntity<ApiResponse<Map<String, Object>>> handleNotFound(ResourceNotFoundException exception){
         Map<String, Object> error = new HashMap<>();
-        error.put("timestamp", LocalDateTime.now());
-        error.put("status", 404);
         error.put("error", exception.getMessage());
-        return  error;
+
+        ApiResponse<Map<String, Object>> response = new ApiResponse<>(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                "Resource not found",
+                error
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, Object> handleValidation(MethodArgumentNotValidException exception){
+    public ResponseEntity<ApiResponse<Map<String, String>>> handleValidation(MethodArgumentNotValidException exception){
 
-        Map<String,Object> errors = new HashMap<>();
+        Map<String, String> errors = new HashMap<>();
         exception.getBindingResult().getFieldErrors().forEach(fieldError ->
                 errors.put(fieldError.getField(),
                         fieldError.getDefaultMessage()));
-        return errors;
+
+        ApiResponse<Map<String, String>> response = new ApiResponse<>(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                "Validation failed",
+                errors
+        );
+        return ResponseEntity.badRequest().body(response);
     }
 
 
