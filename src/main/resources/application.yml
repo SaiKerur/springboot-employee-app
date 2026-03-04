@@ -1,19 +1,18 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
-
-  h2:
-    console:
-      enabled: true
+    url: jdbc:mysql://localhost:3306/employee_management?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: JaiBhairavi@3392
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
     open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
 
 server:
   shutdown: graceful
