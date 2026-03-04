@@ -8,7 +8,7 @@ A Spring Boot REST API for managing employees with validation, structured respon
 - Spring Boot
 - Spring Web
 - Spring Data JPA
-- H2 Database
+- MySQL
 - Jakarta Validation
 - Lombok
 - Maven
@@ -51,12 +51,13 @@ Application runs on:
 
 - `http://localhost:8080`
 
-H2 Console:
+### MySQL Configuration
 
-- `http://localhost:8080/h2-console`
-- JDBC URL: `jdbc:h2:mem:testdb`
-- Username: `sa`
-- Password: *(empty)*
+- URL: `jdbc:mysql://localhost:3306/employee_management?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC`
+- Username: `root`
+- Password: `JaiBhairavi@3392`
+
+Make sure MySQL server is running locally on port `3306`.
 
 ## API Endpoints
 
