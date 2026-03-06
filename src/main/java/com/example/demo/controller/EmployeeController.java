@@ -45,4 +45,49 @@ public class EmployeeController {
         );
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<EmployeeResponseDTO>> getEmployeeById(@PathVariable Long id) {
+        EmployeeResponseDTO employee = service.getById(id);
+        ApiResponse<EmployeeResponseDTO> response = new ApiResponse<>(
+                LocalDateTime.now(),
+                HttpStatus.OK.value(),
+                "Employee fetched successfully",
+                employee
+        );
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<EmployeeResponseDTO>> updateEmployee(
+            @PathVariable Long id,
+            @Valid @RequestBody EmployeeRequestDTO dto
+    ) {
+        EmployeeResponseDTO updatedEmployee = service.update(id, dto);
+        ApiResponse<EmployeeResponseDTO> response = new ApiResponse<>(
+                LocalDateTime.now(),
+                HttpStatus.OK.value(),
+                "Employee updated successfully",
+                updatedEmployee
+        );
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<String>> deleteEmployee(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "false") boolean confirm
+    ) {
+        if (!confirm) {
+            throw new IllegalArgumentException("To delete employee, set confirm=true");
+        }
+        service.deleteById(id);
+        ApiResponse<String> response = new ApiResponse<>(
+                LocalDateTime.now(),
+                HttpStatus.OK.value(),
+                "Employee deleted successfully",
+                "Deleted employee with id: " + id
+        );
+        return ResponseEntity.ok(response);
+    }
 }

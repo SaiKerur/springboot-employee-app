@@ -10,4 +10,10 @@ public interface EmployeeService {
     EmployeeResponseDTO save(EmployeeRequestDTO employee);
 
     List<EmployeeResponseDTO> getAll();
+
+    EmployeeResponseDTO getById(Long id);
+
+    EmployeeResponseDTO update(Long id, EmployeeRequestDTO employee);
+
+    void deleteById(Long id);
 }
