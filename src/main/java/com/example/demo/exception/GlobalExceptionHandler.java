@@ -14,6 +14,20 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<Map<String, Object>>> handleBadRequest(IllegalArgumentException exception) {
+        Map<String, Object> error = new HashMap<>();
+        error.put("error", exception.getMessage());
+
+        ApiResponse<Map<String, Object>> response = new ApiResponse<>(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                "Bad request",
+                error
+        );
+        return ResponseEntity.badRequest().body(response);
+    }
+
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<ApiResponse<Map<String, Object>>> handleConflict(DuplicateResourceException exception) {
         Map<String, Object> error = new HashMap<>();
