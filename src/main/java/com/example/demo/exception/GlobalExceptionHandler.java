@@ -42,6 +42,20 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
+    @ExceptionHandler(AuthenticationFailedException.class)
+    public ResponseEntity<ApiResponse<Map<String, Object>>> handleUnauthorized(AuthenticationFailedException exception) {
+        Map<String, Object> error = new HashMap<>();
+        error.put("error", exception.getMessage());
+
+        ApiResponse<Map<String, Object>> response = new ApiResponse<>(
+                LocalDateTime.now(),
+                HttpStatus.UNAUTHORIZED.value(),
+                "Authentication failed",
+                error
+        );
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse<Map<String, Object>>> handleNotFound(ResourceNotFoundException exception){
         Map<String, Object> error = new HashMap<>();
