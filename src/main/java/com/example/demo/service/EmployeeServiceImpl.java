@@ -47,7 +47,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Override
     @Transactional(readOnly = true)
-    public EmployeeResponseDTO getById(Long id) {
+    public EmployeeResponseDTO getById(int id) {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));
         return toResponse(employee);
@@ -55,12 +55,12 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Override
     @Transactional
-    public EmployeeResponseDTO update(Long id, EmployeeRequestDTO dto) {
+    public EmployeeResponseDTO update(int id, EmployeeRequestDTO dto) {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));
 
         employeeRepository.findByEmailIgnoreCase(dto.email())
-                .filter(existing -> !existing.getId().equals(id))
+                .filter(existing -> existing.getId() != id)
                 .ifPresent(existing -> {
                     throw new DuplicateResourceException("Employee already exists with email: " + dto.email());
                 });
@@ -76,7 +76,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Override
     @Transactional
-    public void deleteById(Long id) {
+    public void deleteById(int id) {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));
         employeeRepository.delete(employee);

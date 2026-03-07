@@ -1,7 +1,7 @@
 package com.example.demo.dto;
 
 public record EmployeeResponseDTO(
-        Long id,
+        int id,
         String name,
         String email,
         Double salary
