@@ -11,9 +11,9 @@ public interface EmployeeService {
 
     List<EmployeeResponseDTO> getAll();
 
-    EmployeeResponseDTO getById(Long id);
+    EmployeeResponseDTO getById(int id);
 
-    EmployeeResponseDTO update(Long id, EmployeeRequestDTO employee);
+    EmployeeResponseDTO update(int id, EmployeeRequestDTO employee);
 
-    void deleteById(Long id);
+    void deleteById(int id);
 }

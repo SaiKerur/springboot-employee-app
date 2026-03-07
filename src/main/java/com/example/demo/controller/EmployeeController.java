@@ -47,7 +47,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<EmployeeResponseDTO>> getEmployeeById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<EmployeeResponseDTO>> getEmployeeById(@PathVariable int id) {
         EmployeeResponseDTO employee = service.getById(id);
         ApiResponse<EmployeeResponseDTO> response = new ApiResponse<>(
                 LocalDateTime.now(),
@@ -60,7 +60,7 @@ public class EmployeeController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<EmployeeResponseDTO>> updateEmployee(
-            @PathVariable Long id,
+            @PathVariable int id,
             @Valid @RequestBody EmployeeRequestDTO dto
     ) {
         EmployeeResponseDTO updatedEmployee = service.update(id, dto);
@@ -75,7 +75,7 @@ public class EmployeeController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> deleteEmployee(
-            @PathVariable Long id,
+            @PathVariable int id,
             @RequestParam(defaultValue = "false") boolean confirm
     ) {
         if (!confirm) {

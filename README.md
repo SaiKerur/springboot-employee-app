@@ -148,20 +148,6 @@ Duplicate email response:
 mvn clean install
 ```
 
-## CI/CD Pipeline
-
-GitHub Actions workflow added at `.github/workflows/ci-cd.yml`.
-
-- On `pull_request` to `master`: runs CI (`mvn clean verify`) with MySQL service.
-- On `push` to `master`: runs CI, then builds and publishes Docker image to GHCR.
-- Manual trigger available using **Run workflow** (`workflow_dispatch`).
-
-Published image format:
-
-- `ghcr.io/<owner>/<repo>:latest` (default branch)
-- `ghcr.io/<owner>/<repo>:<branch>`
-- `ghcr.io/<owner>/<repo>:sha-<commit>`
-
 ## Author
 
 - Sai Kerur

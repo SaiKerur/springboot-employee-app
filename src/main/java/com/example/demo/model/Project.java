@@ -3,7 +3,6 @@ package com.example.demo.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
@@ -12,24 +11,21 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "employees")
+@Table(name = "projects")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Employee extends BaseModel {
+public class Project extends BaseModel {
 
     @NotBlank
     @Column(nullable = false)
-    private String name;
+    private String title;
 
-    @Email
-    @NotBlank
-    @Column(nullable = false, unique = true)
-    private String email;
+    @Column(length = 1000)
+    private String summary;
 
     @PositiveOrZero
     @Column(nullable = false)
-    private double salary;
-
+    private double budget;
 }
