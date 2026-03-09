@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.Set;
+
 public record EmployeeRequestDTO(
         @NotBlank(message = "Name cannot be empty")
         String name,
@@ -15,6 +17,10 @@ public record EmployeeRequestDTO(
 
         @NotNull(message = "Salary cannot be null")
         @Min(value = 100, message = "Salary must be greater than 99")
-        Double salary
+        Double salary,
+
+        Integer departmentId,
+
+        Set<Integer> projectIds
 ) {
 }
