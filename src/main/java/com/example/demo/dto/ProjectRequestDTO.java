@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
+import java.util.Set;
+
 public record ProjectRequestDTO(
         @NotBlank(message = "Project title cannot be empty")
         String title,
@@ -12,6 +14,8 @@ public record ProjectRequestDTO(
 
         @NotNull(message = "Budget cannot be null")
         @PositiveOrZero(message = "Budget must be positive or zero")
-        Double budget
+        Double budget,
+
+        Set<Integer> employeeIds
 ) {
 }

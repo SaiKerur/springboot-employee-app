@@ -2,10 +2,197 @@
   "info": {
     "_postman_id": "a09a7f2d-2d8b-474c-8d38-12a31fa9a5d9",
     "name": "Employee Department Project API",
-    "description": "CRUD APIs for Employee, Department and Project modules.",
+    "description": "CRUD APIs for Auth, Employee, Department, Project and Employee Profile modules. Responses use ApiResponse envelope and delete APIs require confirm=true.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "SignUp",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Virat Kohli\",\n  \"email\": \"virat.auth@gmail.com\",\n  \"password\": \"Virat@1234\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/signup",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "signup"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"virat.auth@gmail.com\",\n  \"password\": \"Virat@1234\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "SignUp - Second User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Anushka Sharma\",\n  \"email\": \"anushka.auth@gmail.com\",\n  \"password\": \"Anushka@123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/signup",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "signup"
+              ]
+            }
+          }
+        },
+        {
+          "name": "SignUp - Duplicate Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Duplicate User\",\n  \"email\": \"virat.auth@gmail.com\",\n  \"password\": \"Duplicate@123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/signup",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "signup"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login - Second User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"anushka.auth@gmail.com\",\n  \"password\": \"Anushka@123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login - Invalid Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"virat.auth@gmail.com\",\n  \"password\": \"Wrong@123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login - Unregistered User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"not.registered@gmail.com\",\n  \"password\": \"SomePass@123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          }
+        }
+      ]
+    },
     {
       "name": "Employee",
       "item": [
@@ -21,7 +208,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Virat\",\n  \"email\": \"virat@gmail.com\",\n  \"salary\": 5000\n}"
+              "raw": "{\n  \"name\": \"Virat\",\n  \"email\": \"virat@gmail.com\",\n  \"salary\": 5000.0,\n  \"departmentId\": {{departmentId}},\n  \"projectIds\": [{{projectId}}]\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/employee",
@@ -32,7 +219,25 @@
                 "employee"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Create Employee returns 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "if (json && json.data && json.data.id) {",
+                  "    pm.collectionVariables.set(\"employeeId\", json.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Get All Employees",
@@ -54,13 +259,13 @@
           "request": {
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/employee/1",
+              "raw": "{{baseUrl}}/employee/{{employeeId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "employee",
-                "1"
+                "{{employeeId}}"
               ]
             }
           }
@@ -77,16 +282,16 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Virat Kohli\",\n  \"email\": \"virat@gmail.com\",\n  \"salary\": 6500\n}"
+              "raw": "{\n  \"name\": \"Virat Kohli\",\n  \"email\": \"virat@gmail.com\",\n  \"salary\": 6500.0,\n  \"departmentId\": {{departmentId}},\n  \"projectIds\": [{{projectId}}]\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/employee/1",
+              "raw": "{{baseUrl}}/employee/{{employeeId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "employee",
-                "1"
+                "{{employeeId}}"
               ]
             }
           }
@@ -96,19 +301,35 @@
           "request": {
             "method": "DELETE",
             "url": {
-              "raw": "{{baseUrl}}/employee/1?confirm=true",
+              "raw": "{{baseUrl}}/employee/{{employeeId}}?confirm=true",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "employee",
-                "1"
+                "{{employeeId}}"
               ],
               "query": [
                 {
                   "key": "confirm",
                   "value": "true"
                 }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Employee - Without Confirm (Expected 400)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/employee/{{employeeId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "employee",
+                "{{employeeId}}"
               ]
             }
           }
@@ -130,7 +351,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Engineering\",\n  \"description\": \"Handles product and platform development\"\n}"
+              "raw": "{\n  \"name\": \"Engineering\",\n  \"description\": \"Handles product and platform development\",\n  \"employeeIds\": []\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/department",
@@ -141,7 +362,25 @@
                 "department"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Create Department returns 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "if (json && json.data && json.data.id) {",
+                  "    pm.collectionVariables.set(\"departmentId\", json.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Get All Departments",
@@ -163,13 +402,13 @@
           "request": {
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/department/1",
+              "raw": "{{baseUrl}}/department/{{departmentId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "department",
-                "1"
+                "{{departmentId}}"
               ]
             }
           }
@@ -186,16 +425,16 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Engineering\",\n  \"description\": \"Owns architecture, backend and frontend services\"\n}"
+              "raw": "{\n  \"name\": \"Engineering\",\n  \"description\": \"Owns architecture, backend and frontend services\",\n  \"employeeIds\": [{{employeeId}}]\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/department/1",
+              "raw": "{{baseUrl}}/department/{{departmentId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "department",
-                "1"
+                "{{departmentId}}"
               ]
             }
           }
@@ -205,19 +444,35 @@
           "request": {
             "method": "DELETE",
             "url": {
-              "raw": "{{baseUrl}}/department/1?confirm=true",
+              "raw": "{{baseUrl}}/department/{{departmentId}}?confirm=true",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "department",
-                "1"
+                "{{departmentId}}"
               ],
               "query": [
                 {
                   "key": "confirm",
                   "value": "true"
                 }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Department - Without Confirm (Expected 400)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/department/{{departmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "department",
+                "{{departmentId}}"
               ]
             }
           }
@@ -239,7 +494,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Core API Revamp\",\n  \"summary\": \"Modernize API stack and improve performance\",\n  \"budget\": 120000\n}"
+              "raw": "{\n  \"title\": \"Core API Revamp\",\n  \"summary\": \"Modernize API stack and improve performance\",\n  \"budget\": 120000.0,\n  \"employeeIds\": []\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/project",
@@ -250,7 +505,25 @@
                 "project"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Create Project returns 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "if (json && json.data && json.data.id) {",
+                  "    pm.collectionVariables.set(\"projectId\", json.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Get All Projects",
@@ -272,13 +545,13 @@
           "request": {
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/project/1",
+              "raw": "{{baseUrl}}/project/{{projectId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "project",
-                "1"
+                "{{projectId}}"
               ]
             }
           }
@@ -295,16 +568,16 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Core API Revamp\",\n  \"summary\": \"Add observability and optimize SQL performance\",\n  \"budget\": 150000\n}"
+              "raw": "{\n  \"title\": \"Core API Revamp\",\n  \"summary\": \"Add observability and optimize SQL performance\",\n  \"budget\": 150000.0,\n  \"employeeIds\": [{{employeeId}}]\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/project/1",
+              "raw": "{{baseUrl}}/project/{{projectId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "project",
-                "1"
+                "{{projectId}}"
               ]
             }
           }
@@ -314,19 +587,178 @@
           "request": {
             "method": "DELETE",
             "url": {
-              "raw": "{{baseUrl}}/project/1?confirm=true",
+              "raw": "{{baseUrl}}/project/{{projectId}}?confirm=true",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "project",
-                "1"
+                "{{projectId}}"
               ],
               "query": [
                 {
                   "key": "confirm",
                   "value": "true"
                 }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Project - Without Confirm (Expected 400)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/project/{{projectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "project",
+                "{{projectId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Employee Profile",
+      "item": [
+        {
+          "name": "Create Employee Profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phoneNumber\": \"+91-9876543210\",\n  \"address\": \"Bengaluru, Karnataka\",\n  \"emergencyContact\": \"Anushka\",\n  \"employeeId\": {{employeeId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/employee-profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "employee-profile"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Create Employee Profile returns 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "if (json && json.data && json.data.id) {",
+                  "    pm.collectionVariables.set(\"employeeProfileId\", json.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get All Employee Profiles",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/employee-profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "employee-profile"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Employee Profile By Id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/employee-profile/{{employeeProfileId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "employee-profile",
+                "{{employeeProfileId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Employee Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phoneNumber\": \"+91-9000000000\",\n  \"address\": \"Mumbai, Maharashtra\",\n  \"emergencyContact\": \"Rohit\",\n  \"employeeId\": {{employeeId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/employee-profile/{{employeeProfileId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "employee-profile",
+                "{{employeeProfileId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Employee Profile",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/employee-profile/{{employeeProfileId}}?confirm=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "employee-profile",
+                "{{employeeProfileId}}"
+              ],
+              "query": [
+                {
+                  "key": "confirm",
+                  "value": "true"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Employee Profile - Without Confirm (Expected 400)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/employee-profile/{{employeeProfileId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "employee-profile",
+                "{{employeeProfileId}}"
               ]
             }
           }
@@ -338,6 +770,22 @@
     {
       "key": "baseUrl",
       "value": "http://localhost:8080"
+    },
+    {
+      "key": "departmentId",
+      "value": "1"
+    },
+    {
+      "key": "projectId",
+      "value": "1"
+    },
+    {
+      "key": "employeeId",
+      "value": "1"
+    },
+    {
+      "key": "employeeProfileId",
+      "value": "1"
     }
   ]
 }
