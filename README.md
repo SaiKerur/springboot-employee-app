@@ -54,8 +54,8 @@ Application runs on:
 ### MySQL Configuration
 
 - URL: `jdbc:mysql://localhost:3306/employee_management?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC`
-- Username: `root`
-- Password: `JaiBhairavi@3392`
+- Username: `*****`
+- Password: `**************`
 
 Make sure MySQL server is running locally on port `3306`.
 
