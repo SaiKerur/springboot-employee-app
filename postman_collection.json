@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "a09a7f2d-2d8b-474c-8d38-12a31fa9a5d9",
     "name": "Employee Department Project API",
-    "description": "CRUD APIs for Auth, Employee, Department, Project, Employee Profile and Payroll Payments modules. Responses use ApiResponse envelope and delete APIs require confirm=true.",
+    "description": "CRUD APIs for Auth, Employee, Department, Project, Task, Attendance, Employee Profile and Payroll Payments modules. Responses use ApiResponse envelope and delete APIs require confirm=true.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -623,6 +623,988 @@
       ]
     },
     {
+      "name": "Task",
+      "item": [
+        {
+          "name": "Create Task",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Prepare Sprint Planning\",\n  \"description\": \"Prepare story breakdown and estimates\",\n  \"status\": \"TODO\",\n  \"priority\": \"HIGH\",\n  \"dueDate\": \"2026-03-25\",\n  \"assignedEmployeeId\": {{employeeId}},\n  \"projectId\": {{projectId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/task",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "task"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Create Task returns 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "if (json && json.data && json.data.id) {",
+                  "    pm.collectionVariables.set(\"taskId\", json.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Task - Without Project (Optional Relation)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Internal Knowledge Sharing\",\n  \"description\": \"Host internal backend architecture walkthrough\",\n  \"status\": \"IN_PROGRESS\",\n  \"priority\": \"MEDIUM\",\n  \"dueDate\": \"2026-03-30\",\n  \"assignedEmployeeId\": {{employeeId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/task",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "task"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Task - Invalid Status (Expected 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Invalid Status Task\",\n  \"description\": \"Should fail due to enum mismatch\",\n  \"status\": \"STARTED\",\n  \"priority\": \"HIGH\",\n  \"dueDate\": \"2026-03-31\",\n  \"assignedEmployeeId\": {{employeeId}},\n  \"projectId\": {{projectId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/task",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "task"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Task - Missing Assigned Employee (Expected 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Missing Assignee\",\n  \"description\": \"Should fail because assignedEmployeeId is mandatory\",\n  \"status\": \"TODO\",\n  \"priority\": \"LOW\",\n  \"dueDate\": \"2026-03-31\",\n  \"projectId\": {{projectId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/task",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "task"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Task - Employee Not Found (Expected 404)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Ghost Assignee\",\n  \"description\": \"Should fail because employee id does not exist\",\n  \"status\": \"TODO\",\n  \"priority\": \"LOW\",\n  \"dueDate\": \"2026-03-31\",\n  \"assignedEmployeeId\": {{nonExistingEmployeeId}},\n  \"projectId\": {{projectId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/task",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "task"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Task - Project Not Found (Expected 404)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Missing Project Link\",\n  \"description\": \"Should fail because project id does not exist\",\n  \"status\": \"TODO\",\n  \"priority\": \"MEDIUM\",\n  \"dueDate\": \"2026-03-31\",\n  \"assignedEmployeeId\": {{employeeId}},\n  \"projectId\": {{nonExistingProjectId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/task",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "task"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Task - Blank Title (Expected 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"\",\n  \"description\": \"Should fail because title is required\",\n  \"status\": \"TODO\",\n  \"priority\": \"LOW\",\n  \"dueDate\": \"2026-03-31\",\n  \"assignedEmployeeId\": {{employeeId}},\n  \"projectId\": {{projectId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/task",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "task"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Task - Missing Priority (Expected 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Missing Priority\",\n  \"description\": \"Should fail because priority is mandatory\",\n  \"status\": \"TODO\",\n  \"dueDate\": \"2026-03-31\",\n  \"assignedEmployeeId\": {{employeeId}},\n  \"projectId\": {{projectId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/task",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "task"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get All Tasks",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/task",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "task"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Task By Id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/task/{{taskId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "task",
+                "{{taskId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Task By Id - Not Found (Expected 404)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/task/{{nonExistingTaskId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "task",
+                "{{nonExistingTaskId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Task",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Prepare Sprint Planning - Updated\",\n  \"description\": \"Include risk matrix and dependency review\",\n  \"status\": \"IN_PROGRESS\",\n  \"priority\": \"CRITICAL\",\n  \"dueDate\": \"2026-04-01\",\n  \"assignedEmployeeId\": {{employeeId}},\n  \"projectId\": {{projectId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/task/{{taskId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "task",
+                "{{taskId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Task - Invalid Priority (Expected 400)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Invalid Priority Update\",\n  \"description\": \"Should fail due to enum mismatch\",\n  \"status\": \"IN_PROGRESS\",\n  \"priority\": \"URGENT\",\n  \"dueDate\": \"2026-04-01\",\n  \"assignedEmployeeId\": {{employeeId}},\n  \"projectId\": {{projectId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/task/{{taskId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "task",
+                "{{taskId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Task - Assigned Employee Not Found (Expected 404)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Invalid Assignee Update\",\n  \"description\": \"Should fail because employee does not exist\",\n  \"status\": \"IN_PROGRESS\",\n  \"priority\": \"HIGH\",\n  \"dueDate\": \"2026-04-01\",\n  \"assignedEmployeeId\": {{nonExistingEmployeeId}},\n  \"projectId\": {{projectId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/task/{{taskId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "task",
+                "{{taskId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Task - Project Not Found (Expected 404)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Invalid Project Update\",\n  \"description\": \"Should fail because project does not exist\",\n  \"status\": \"IN_PROGRESS\",\n  \"priority\": \"HIGH\",\n  \"dueDate\": \"2026-04-01\",\n  \"assignedEmployeeId\": {{employeeId}},\n  \"projectId\": {{nonExistingProjectId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/task/{{taskId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "task",
+                "{{taskId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Task - Not Found (Expected 404)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Task not found\",\n  \"description\": \"Should fail\",\n  \"status\": \"TODO\",\n  \"priority\": \"LOW\",\n  \"dueDate\": \"2026-04-01\",\n  \"assignedEmployeeId\": {{employeeId}},\n  \"projectId\": {{projectId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/task/{{nonExistingTaskId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "task",
+                "{{nonExistingTaskId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Task - Without Confirm (Expected 400)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/task/{{taskId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "task",
+                "{{taskId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Task",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/task/{{taskId}}?confirm=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "task",
+                "{{taskId}}"
+              ],
+              "query": [
+                {
+                  "key": "confirm",
+                  "value": "true"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Task - Already Deleted (Expected 404)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/task/{{taskId}}?confirm=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "task",
+                "{{taskId}}"
+              ],
+              "query": [
+                {
+                  "key": "confirm",
+                  "value": "true"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Task - Not Found Id (Expected 404)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/task/{{nonExistingTaskId}}?confirm=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "task",
+                "{{nonExistingTaskId}}"
+              ],
+              "query": [
+                {
+                  "key": "confirm",
+                  "value": "true"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Attendance",
+      "item": [
+        {
+          "name": "Create Attendance",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": {{employeeId}},\n  \"workDate\": \"{{attendanceDate}}\",\n  \"checkInAt\": \"{{attendanceCheckIn}}\",\n  \"checkOutAt\": \"{{attendanceCheckOut}}\",\n  \"status\": \"PRESENT\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/attendance",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendance"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Create Attendance returns 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "if (json && json.data && json.data.id) {",
+                  "    pm.collectionVariables.set(\"attendanceId\", json.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Attendance - Duplicate For Same Date (Expected 409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": {{employeeId}},\n  \"workDate\": \"{{attendanceDate}}\",\n  \"checkInAt\": \"{{attendanceCheckIn}}\",\n  \"checkOutAt\": \"{{attendanceCheckOut}}\",\n  \"status\": \"PRESENT\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/attendance",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendance"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Attendance - Second Record (For Update Duplicate Scenario)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": {{employeeId}},\n  \"workDate\": \"{{attendanceDateSecond}}\",\n  \"checkInAt\": \"2026-03-27T09:10:00\",\n  \"checkOutAt\": \"2026-03-27T18:05:00\",\n  \"status\": \"PRESENT\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/attendance",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendance"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Create second attendance returns 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "if (json && json.data && json.data.id) {",
+                  "    pm.collectionVariables.set(\"attendanceIdSecond\", json.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Attendance - CheckOut Before CheckIn (Expected 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": {{employeeId}},\n  \"workDate\": \"2026-03-21\",\n  \"checkInAt\": \"2026-03-21T18:00:00\",\n  \"checkOutAt\": \"2026-03-21T09:00:00\",\n  \"status\": \"PRESENT\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/attendance",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendance"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Attendance - Employee Not Found (Expected 404)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": {{nonExistingEmployeeId}},\n  \"workDate\": \"2026-03-22\",\n  \"checkInAt\": \"2026-03-22T09:05:00\",\n  \"checkOutAt\": \"2026-03-22T18:10:00\",\n  \"status\": \"WORK_FROM_HOME\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/attendance",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendance"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Attendance - Missing Work Date (Expected 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": {{employeeId}},\n  \"checkInAt\": \"2026-03-23T09:00:00\",\n  \"checkOutAt\": \"2026-03-23T18:00:00\",\n  \"status\": \"PRESENT\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/attendance",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendance"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Attendance - Missing Status (Expected 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": {{employeeId}},\n  \"workDate\": \"2026-03-28\",\n  \"checkInAt\": \"2026-03-28T09:00:00\",\n  \"checkOutAt\": \"2026-03-28T18:00:00\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/attendance",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendance"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Attendance - Invalid Status (Expected 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": {{employeeId}},\n  \"workDate\": \"2026-03-29\",\n  \"checkInAt\": \"2026-03-29T09:00:00\",\n  \"checkOutAt\": \"2026-03-29T18:00:00\",\n  \"status\": \"ONSITE\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/attendance",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendance"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get All Attendance Records",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/attendance",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendance"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Attendance By Id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/attendance/{{attendanceId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendance",
+                "{{attendanceId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Attendance By Id - Not Found (Expected 404)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/attendance/{{nonExistingAttendanceId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendance",
+                "{{nonExistingAttendanceId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Attendance",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": {{employeeId}},\n  \"workDate\": \"{{attendanceDateUpdated}}\",\n  \"checkInAt\": \"{{attendanceCheckInUpdated}}\",\n  \"checkOutAt\": \"{{attendanceCheckOutUpdated}}\",\n  \"status\": \"WORK_FROM_HOME\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/attendance/{{attendanceId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendance",
+                "{{attendanceId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Attendance - Invalid Time Window (Expected 400)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": {{employeeId}},\n  \"workDate\": \"{{attendanceDateUpdated}}\",\n  \"checkInAt\": \"2026-03-24T19:00:00\",\n  \"checkOutAt\": \"2026-03-24T08:00:00\",\n  \"status\": \"PRESENT\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/attendance/{{attendanceId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendance",
+                "{{attendanceId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Attendance - Employee Not Found (Expected 404)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": {{nonExistingEmployeeId}},\n  \"workDate\": \"{{attendanceDateUpdated}}\",\n  \"checkInAt\": \"{{attendanceCheckInUpdated}}\",\n  \"checkOutAt\": \"{{attendanceCheckOutUpdated}}\",\n  \"status\": \"PRESENT\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/attendance/{{attendanceId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendance",
+                "{{attendanceId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Attendance - Duplicate Employee Date (Expected 409)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": {{employeeId}},\n  \"workDate\": \"{{attendanceDate}}\",\n  \"checkInAt\": \"2026-03-27T09:15:00\",\n  \"checkOutAt\": \"2026-03-27T18:20:00\",\n  \"status\": \"WORK_FROM_HOME\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/attendance/{{attendanceIdSecond}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendance",
+                "{{attendanceIdSecond}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Attendance - Not Found (Expected 404)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": {{employeeId}},\n  \"workDate\": \"2026-03-26\",\n  \"checkInAt\": \"2026-03-26T09:00:00\",\n  \"checkOutAt\": \"2026-03-26T18:00:00\",\n  \"status\": \"PRESENT\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/attendance/{{nonExistingAttendanceId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendance",
+                "{{nonExistingAttendanceId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Attendance - Without Confirm (Expected 400)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/attendance/{{attendanceId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendance",
+                "{{attendanceId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Attendance",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/attendance/{{attendanceId}}?confirm=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendance",
+                "{{attendanceId}}"
+              ],
+              "query": [
+                {
+                  "key": "confirm",
+                  "value": "true"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Attendance - Already Deleted (Expected 404)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/attendance/{{attendanceId}}?confirm=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendance",
+                "{{attendanceId}}"
+              ],
+              "query": [
+                {
+                  "key": "confirm",
+                  "value": "true"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Attendance - Not Found Id (Expected 404)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/attendance/{{nonExistingAttendanceId}}?confirm=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "attendance",
+                "{{nonExistingAttendanceId}}"
+              ],
+              "query": [
+                {
+                  "key": "confirm",
+                  "value": "true"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "Payments",
       "item": [
         {
@@ -876,6 +1858,62 @@
     {
       "key": "salaryMonth",
       "value": "2026-03"
+    },
+    {
+      "key": "taskId",
+      "value": "1"
+    },
+    {
+      "key": "attendanceId",
+      "value": "1"
+    },
+    {
+      "key": "nonExistingEmployeeId",
+      "value": "999999"
+    },
+    {
+      "key": "nonExistingProjectId",
+      "value": "999999"
+    },
+    {
+      "key": "nonExistingTaskId",
+      "value": "999999"
+    },
+    {
+      "key": "nonExistingAttendanceId",
+      "value": "999999"
+    },
+    {
+      "key": "attendanceDate",
+      "value": "2026-03-20"
+    },
+    {
+      "key": "attendanceDateUpdated",
+      "value": "2026-03-24"
+    },
+    {
+      "key": "attendanceDateSecond",
+      "value": "2026-03-27"
+    },
+    {
+      "key": "attendanceCheckIn",
+      "value": "2026-03-20T09:00:00"
+    },
+    {
+      "key": "attendanceCheckOut",
+      "value": "2026-03-20T18:00:00"
+    },
+    {
+      "key": "attendanceCheckInUpdated",
+      "value": "2026-03-24T09:30:00"
+    },
+    {
+      "key": "attendanceCheckOutUpdated",
+      "value": "2026-03-24T18:30:00"
+    },
+    {
+      "key": "attendanceIdSecond",
+      "value": "2"
     }
   ]
 }
