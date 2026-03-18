@@ -16,3 +16,10 @@ spring:
 
 server:
   shutdown: graceful
+
+payment:
+  gateway:
+    stripe:
+      api-key: stripe-test-key
+    razorpay:
+      api-key: razorpay-test-key
