@@ -17,6 +17,7 @@ A Spring Boot REST API for managing employees with validation, structured respon
 
 - Create employee with request validation
 - Get all employees
+- Real-time operations with work logs, live notifications, and presence status
 - Consistent API response format using `ResponseEntity` + `ApiResponse`
 - Global exception handling
 - Duplicate email protection
@@ -113,6 +114,30 @@ Make sure MySQL server is running locally on port `3306`.
   ]
 }
 ```
+
+### 3) Work Log CRUD
+
+- `POST /work-log`
+- `GET /work-log`
+- `GET /work-log/{id}`
+- `PUT /work-log/{id}`
+- `DELETE /work-log/{id}?confirm=true`
+
+### 4) Live Notification CRUD
+
+- `POST /live-notification`
+- `GET /live-notification`
+- `GET /live-notification/{id}`
+- `PUT /live-notification/{id}`
+- `DELETE /live-notification/{id}?confirm=true`
+
+### 5) Presence Status CRUD
+
+- `POST /presence-status`
+- `GET /presence-status`
+- `GET /presence-status/{id}`
+- `PUT /presence-status/{id}`
+- `DELETE /presence-status/{id}?confirm=true`
 
 ## Validation Rules
 
