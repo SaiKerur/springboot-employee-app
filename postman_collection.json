@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "a09a7f2d-2d8b-474c-8d38-12a31fa9a5d9",
     "name": "Employee Department Project API",
-    "description": "CRUD APIs for Auth, Employee, Department, Project, Task, Attendance, Employee Profile and Payroll Payments modules. Responses use ApiResponse envelope and delete APIs require confirm=true.",
+    "description": "CRUD APIs for Auth, Employee, Department, Project, Task, Attendance, Work Log, Live Notification, Presence Status, Employee Profile and Payroll Payments modules. Responses use ApiResponse envelope and delete APIs require confirm=true.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -1605,6 +1605,904 @@
       ]
     },
     {
+      "name": "Work Log",
+      "item": [
+        {
+          "name": "Create Work Log",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activity\": \"Completed backend API integration\",\n  \"durationMinutes\": 135,\n  \"workDate\": \"2026-03-18\",\n  \"employeeId\": {{employeeId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/work-log",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "work-log"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Create Work Log returns 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "if (json && json.data && json.data.id) {",
+                  "    pm.collectionVariables.set(\"workLogId\", json.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Work Log - Missing Activity (Expected 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activity\": \"\",\n  \"durationMinutes\": 45,\n  \"workDate\": \"2026-03-18\",\n  \"employeeId\": {{employeeId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/work-log",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "work-log"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Work Log - Invalid Duration (Expected 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activity\": \"Invalid duration test\",\n  \"durationMinutes\": 0,\n  \"workDate\": \"2026-03-18\",\n  \"employeeId\": {{employeeId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/work-log",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "work-log"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Work Log - Employee Not Found (Expected 404)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activity\": \"Ghost employee test\",\n  \"durationMinutes\": 30,\n  \"workDate\": \"2026-03-18\",\n  \"employeeId\": {{nonExistingEmployeeId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/work-log",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "work-log"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get All Work Logs",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/work-log",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "work-log"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Work Log By Id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/work-log/{{workLogId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "work-log",
+                "{{workLogId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Work Log By Id - Not Found (Expected 404)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/work-log/{{nonExistingWorkLogId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "work-log",
+                "{{nonExistingWorkLogId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Work Log",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activity\": \"Completed backend API integration and test cases\",\n  \"durationMinutes\": 180,\n  \"workDate\": \"2026-03-18\",\n  \"employeeId\": {{employeeId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/work-log/{{workLogId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "work-log",
+                "{{workLogId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Work Log - Not Found (Expected 404)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activity\": \"Should fail\",\n  \"durationMinutes\": 10,\n  \"workDate\": \"2026-03-18\",\n  \"employeeId\": {{employeeId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/work-log/{{nonExistingWorkLogId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "work-log",
+                "{{nonExistingWorkLogId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Work Log - Without Confirm (Expected 400)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/work-log/{{workLogId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "work-log",
+                "{{workLogId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Work Log",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/work-log/{{workLogId}}?confirm=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "work-log",
+                "{{workLogId}}"
+              ],
+              "query": [
+                {
+                  "key": "confirm",
+                  "value": "true"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Work Log - Already Deleted (Expected 404)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/work-log/{{workLogId}}?confirm=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "work-log",
+                "{{workLogId}}"
+              ],
+              "query": [
+                {
+                  "key": "confirm",
+                  "value": "true"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Live Notification",
+      "item": [
+        {
+          "name": "Create Live Notification",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Build completed successfully\",\n  \"type\": \"SUCCESS\",\n  \"readFlag\": false,\n  \"employeeId\": {{employeeId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/live-notification",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "live-notification"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Create Live Notification returns 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "if (json && json.data && json.data.id) {",
+                  "    pm.collectionVariables.set(\"liveNotificationId\", json.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Live Notification - Blank Message (Expected 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"\",\n  \"type\": \"INFO\",\n  \"readFlag\": false,\n  \"employeeId\": {{employeeId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/live-notification",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "live-notification"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Live Notification - Invalid Type (Expected 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Invalid enum\",\n  \"type\": \"ALERT\",\n  \"readFlag\": false,\n  \"employeeId\": {{employeeId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/live-notification",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "live-notification"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Live Notification - Employee Not Found (Expected 404)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Ghost employee\",\n  \"type\": \"WARNING\",\n  \"readFlag\": false,\n  \"employeeId\": {{nonExistingEmployeeId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/live-notification",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "live-notification"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get All Live Notifications",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/live-notification",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "live-notification"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Live Notification By Id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/live-notification/{{liveNotificationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "live-notification",
+                "{{liveNotificationId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Live Notification By Id - Not Found (Expected 404)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/live-notification/{{nonExistingLiveNotificationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "live-notification",
+                "{{nonExistingLiveNotificationId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Live Notification",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Build completed with minor warnings\",\n  \"type\": \"WARNING\",\n  \"readFlag\": true,\n  \"employeeId\": {{employeeId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/live-notification/{{liveNotificationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "live-notification",
+                "{{liveNotificationId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Live Notification - Missing Read Flag (Expected 400)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Missing read flag\",\n  \"type\": \"INFO\",\n  \"employeeId\": {{employeeId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/live-notification/{{liveNotificationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "live-notification",
+                "{{liveNotificationId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Live Notification - Not Found (Expected 404)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Should fail\",\n  \"type\": \"INFO\",\n  \"readFlag\": false,\n  \"employeeId\": {{employeeId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/live-notification/{{nonExistingLiveNotificationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "live-notification",
+                "{{nonExistingLiveNotificationId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Live Notification - Without Confirm (Expected 400)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/live-notification/{{liveNotificationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "live-notification",
+                "{{liveNotificationId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Live Notification",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/live-notification/{{liveNotificationId}}?confirm=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "live-notification",
+                "{{liveNotificationId}}"
+              ],
+              "query": [
+                {
+                  "key": "confirm",
+                  "value": "true"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Live Notification - Already Deleted (Expected 404)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/live-notification/{{liveNotificationId}}?confirm=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "live-notification",
+                "{{liveNotificationId}}"
+              ],
+              "query": [
+                {
+                  "key": "confirm",
+                  "value": "true"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Presence Status",
+      "item": [
+        {
+          "name": "Create Presence Status",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"state\": \"ONLINE\",\n  \"source\": \"WEB_APP\",\n  \"employeeId\": {{employeeId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/presence-status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "presence-status"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Create Presence Status returns 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "if (json && json.data && json.data.id) {",
+                  "    pm.collectionVariables.set(\"presenceStatusId\", json.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Presence Status - Missing State (Expected 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"source\": \"MOBILE_APP\",\n  \"employeeId\": {{employeeId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/presence-status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "presence-status"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Presence Status - Invalid State (Expected 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"state\": \"BUSY\",\n  \"source\": \"WEB_APP\",\n  \"employeeId\": {{employeeId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/presence-status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "presence-status"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Presence Status - Employee Not Found (Expected 404)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"state\": \"AWAY\",\n  \"source\": \"MOBILE_APP\",\n  \"employeeId\": {{nonExistingEmployeeId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/presence-status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "presence-status"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get All Presence Statuses",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/presence-status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "presence-status"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Presence Status By Id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/presence-status/{{presenceStatusId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "presence-status",
+                "{{presenceStatusId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Presence Status By Id - Not Found (Expected 404)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/presence-status/{{nonExistingPresenceStatusId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "presence-status",
+                "{{nonExistingPresenceStatusId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Presence Status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"state\": \"AWAY\",\n  \"source\": \"MOBILE_APP\",\n  \"employeeId\": {{employeeId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/presence-status/{{presenceStatusId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "presence-status",
+                "{{presenceStatusId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Presence Status - Missing Employee Id (Expected 400)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"state\": \"OFFLINE\",\n  \"source\": \"WEB_APP\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/presence-status/{{presenceStatusId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "presence-status",
+                "{{presenceStatusId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Presence Status - Not Found (Expected 404)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"state\": \"ONLINE\",\n  \"source\": \"WEB_APP\",\n  \"employeeId\": {{employeeId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/presence-status/{{nonExistingPresenceStatusId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "presence-status",
+                "{{nonExistingPresenceStatusId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Presence Status - Without Confirm (Expected 400)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/presence-status/{{presenceStatusId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "presence-status",
+                "{{presenceStatusId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Presence Status",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/presence-status/{{presenceStatusId}}?confirm=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "presence-status",
+                "{{presenceStatusId}}"
+              ],
+              "query": [
+                {
+                  "key": "confirm",
+                  "value": "true"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Presence Status - Already Deleted (Expected 404)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/presence-status/{{presenceStatusId}}?confirm=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "presence-status",
+                "{{presenceStatusId}}"
+              ],
+              "query": [
+                {
+                  "key": "confirm",
+                  "value": "true"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "Payments",
       "item": [
         {
@@ -1914,6 +2812,30 @@
     {
       "key": "attendanceIdSecond",
       "value": "2"
+    },
+    {
+      "key": "workLogId",
+      "value": "1"
+    },
+    {
+      "key": "nonExistingWorkLogId",
+      "value": "999999"
+    },
+    {
+      "key": "liveNotificationId",
+      "value": "1"
+    },
+    {
+      "key": "nonExistingLiveNotificationId",
+      "value": "999999"
+    },
+    {
+      "key": "presenceStatusId",
+      "value": "1"
+    },
+    {
+      "key": "nonExistingPresenceStatusId",
+      "value": "999999"
     }
   ]
 }
